@@ -1,15 +1,19 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker
 
-# ✨ This is your connection string
-# Replace with your actual username/password
-DATABASE_URL = "postgresql://postgres:carry$$tart!@localhost:5432/mygameapi"
+# Replace these with your Postgres credentials & DB name
+DATABASE_URL = "postgresql://postgres:SSA76P!Eva!44884!4196573@localhost/games_api_db"
 
-# 🔌 This connects SQLAlchemy to PostgreSQL
+# Create an engine — this manages the connection pool to your database
 engine = create_engine(DATABASE_URL)
 
-# 🧱 This creates sessions that will talk to the DB
+# Create a configured "Session" class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# 🧬 This is the base class your models will inherit from
-Base = declarative_base()
+# Dependency to get DB session inside routes
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db  # provide session to caller
+    finally:
+        db.close()  # close session after use
